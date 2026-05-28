@@ -1,0 +1,1119 @@
+      
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#f5f7fa;color:#1a1510;font-size:14px}
+:root{
+  --cream:#f5f7fa;--white:#ffffff;--border:#e4e7ec;--border2:#d0d5dd;
+  --text1:#101828;--text2:#475467;--text3:#98a2b3;
+  --accent:#e06c00;--accent2:#c25c00;--accent-light:#fff4eb;
+  --amber:#b8620a;--amber-light:#fef3e2;
+  --red:#c0392b;--red-light:#fdf0ef;
+  --blue:#1a4d8a;--blue-light:#eaf1fb;
+  --purple:#5b2d8e;--purple-light:#f3edfb;
+  --radius:8px;--radius-lg:12px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08);
+}
+a{color:inherit;text-decoration:none}
+input,select,textarea{font-family:inherit;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);padding:8px 10px;background:var(--white);color:var(--text1);width:100%;outline:none;transition:.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(224,108,0,.12)}
+textarea{resize:vertical;min-height:80px}
+label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:4px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:.15s;font-family:inherit}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent2);box-shadow:0 2px 8px rgba(224,108,0,.25)}
+.btn-outline{background:var(--white);color:var(--text1);border:1px solid var(--border2)}.btn-outline:hover{background:var(--cream)}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{opacity:.9}
+.btn-sm{padding:5px 10px;font-size:12px}
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.badge-green{background:var(--accent-light);color:var(--accent)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-blue{background:var(--blue-light);color:var(--blue)}
+.badge-gray{background:#f2f4f7;color:var(--text2)}
+.badge-purple{background:var(--purple-light);color:var(--purple)}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:1000}
+.modal{background:var(--white);border-radius:var(--radius-lg);width:520px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-hdr h3{font-size:15px;font-weight:600}
+.modal-body{padding:20px}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid .full{grid-column:1/-1}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:8px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text1)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f9fafb}
+.actions{display:flex;gap:4px}
+.icon-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border2);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:14px;transition:.15s}
+.icon-btn:hover{background:#f5f7fa;color:var(--text1)}
+.icon-btn.del:hover{background:var(--red-light);color:var(--red);border-color:var(--red)}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100}
+.sb-brand{padding:18px 20px;border-bottom:1px solid var(--border)}
+.sb-brand h2{font-size:16px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:6px}
+.sb-brand span{font-size:11px;color:var(--text3)}
+.sb-nav{flex:1;padding:12px 0;overflow-y:auto}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:.12s;border-left:2px solid transparent}
+.sb-item:hover{background:var(--cream);color:var(--text1)}
+.sb-item.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+.sb-item i{font-size:16px;width:18px}
+.sb-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.main{margin-left:220px;min-height:100vh;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;background:var(--white);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;z-index:50}
+.topbar h1{font-size:17px;font-weight:600}
+.page{padding:24px;flex:1}
+.page-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.page-hdr h2{font-size:16px;font-weight:600}
+.filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filters input,.filters select{width:auto;font-size:12px;padding:6px 10px}
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.metric{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;transition:.15s}
+.metric:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(224,108,0,.08)}
+.metric-label{font-size:11px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.metric-val{font-size:24px;font-weight:700;color:var(--text1)}
+.metric-sub{font-size:11px;color:var(--text3);margin-top:4px}
+.metric-icon{float:right;width:36px;height:36px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:18px}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.chart-bar-wrap{display:flex;flex-direction:column;gap:6px}
+.chart-bar-row{display:flex;align-items:center;gap:8px;font-size:12px}
+.chart-bar-label{width:80px;color:var(--text2);flex-shrink:0;text-align:right}
+.chart-bar-track{flex:1;height:10px;background:#f2f4f7;border-radius:20px;overflow:hidden}
+.chart-bar-fill{height:100%;border-radius:20px;background:#e06c00;transition:.4s}
+.chart-bar-val{width:40px;color:var(--text2);font-weight:500}
+.order-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;margin-bottom:10px}
+.order-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.order-items{font-size:12px;color:var(--text2);margin-bottom:8px}
+.order-footer{display:flex;justify-content:space-between;align-items:center}
+.table-map-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.table-cell{border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px;cursor:pointer;transition:.15s;text-align:center;background:var(--white)}
+.table-cell:hover{border-color:var(--accent)}
+.table-cell.occupied{background:#fdf8ef;border-color:#e0c97a}
+.table-cell.available{background:#eef7f1;border-color:#8ec9a2}
+.table-cell.cleaning{background:#fdf0ef;border-color:#e5a09a}
+.table-cell .t-num{font-size:18px;font-weight:700;color:var(--text1)}
+.table-cell .t-info{font-size:11px;color:var(--text3);margin-top:2px}
+.table-cell .t-status{margin-top:6px}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab{padding:9px 16px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tab:hover:not(.active){color:var(--text1)}
+.split-box{background:#f5f7fa;border-radius:var(--radius);padding:12px;margin:10px 0}
+.bill-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.bill-row:last-child{border:none;font-weight:600;font-size:14px}
+.section-title{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:#ccc;border-radius:20px;cursor:pointer;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--accent);box-shadow:0 0 0 2px rgba(224,108,0,.15)}
+.toggle-slider:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.toggle input:checked+.toggle-slider:before{transform:translateX(16px)}
+.report-layout{display:block;width:100%}
+.report-dropdown-wrap{position:relative;display:inline-block}
+.report-dropdown-wrap select{appearance:none;background:var(--white);border:1.5px solid var(--border2);border-radius:var(--radius);padding:7px 34px 7px 12px;font-size:13px;font-weight:500;color:var(--text1);cursor:pointer;min-width:200px;font-family:inherit;transition:.15s}
+.report-dropdown-wrap select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(224,108,0,.12);outline:none}
+.report-dropdown-wrap i{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--accent);font-size:15px}
+.gst-calc{background:#f5f7fa;border-radius:var(--radius);padding:12px}
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:12px;padding-bottom:14px;position:relative}
+.tl-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:3px;z-index:1;box-shadow:0 0 0 3px var(--accent-light)}
+.tl-dot.pending{background:var(--border2)}
+.tl-line{position:absolute;left:4px;top:14px;bottom:0;width:2px;background:var(--border)}
+.tl-item:last-child .tl-line{display:none}
+.staff-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px;display:flex;align-items:center;gap:12px}
+.staff-info{flex:1}
+.staff-name{font-weight:600;font-size:13px}
+.staff-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.cat-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500}
+.veg{background:#e8f5e9;color:#2e7d32}.nonveg{background:#fce4ec;color:#c62828}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-state i{font-size:40px;margin-bottom:8px;display:block}
+.search-box{position:relative}
+.search-box i{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px}
+.search-box input{padding-left:30px}
+.alert{padding:10px 14px;border-radius:var(--radius);font-size:13px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.alert-info{background:var(--blue-light);color:var(--blue)}
+.alert-success{background:var(--accent-light);color:var(--accent)}
+.alert-warning{background:var(--amber-light);color:var(--amber)}
+.select-wrap{position:relative}
+.select-wrap i{position:absolute;right:8px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text3);font-size:14px}
+.select-wrap select{appearance:none;padding-right:28px}
+.tip{font-size:11px;color:var(--text3);margin-top:3px}
+@media(max-width:900px){
+  .main{margin-left:0}
+  .sidebar{transform:translateX(-100%)}
+  .metric-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<div id="app">
+
+<div class="sidebar">
+  <div class="sb-brand">
+    <h2><i class="ti ti-qrcode" style="color:var(--accent)"></i> QRMenu</h2>
+    <span>Admin Panel</span>
+  </div>
+  <nav class="sb-nav" id="sb-nav"></nav>
+  <div class="sb-footer">
+    <div class="avatar">OS</div>
+    <div>
+      <div style="font-size:12px;font-weight:600">Ocean Softwares</div>
+      <div style="font-size:11px;color:var(--text3)">Admin</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1 id="page-title">Dashboard</h1>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="badge badge-green"><i class="ti ti-circle-filled" style="font-size:8px"></i> Premium Plan</span>
+      <button class="icon-btn"><i class="ti ti-bell" aria-label="Notifications"></i></button>
+    </div>
+  </div>
+  <div class="page" id="page-content"></div>
+</div>
+
+</div>
+
+<div id="modal-root"></div>
+
+<script>
+const NAV=[
+  {id:'dashboard',icon:'ti-dashboard',label:'Dashboard'},
+  {id:'tables',icon:'ti-layout-grid',label:'Tables'},
+  {id:'menu',icon:'ti-menu-2',label:'Menu'},
+  {id:'orders',icon:'ti-clipboard-list',label:'Orders'},
+  {id:'billing',icon:'ti-receipt',label:'Billing'},
+  {id:'reports',icon:'ti-chart-bar',label:'Reports'},
+  {id:'staff',icon:'ti-users',label:'Staff'},
+];
+
+let activeTab='dashboard';
+let modal=null;
+
+function setPage(id){
+  activeTab=id;
+  document.querySelectorAll('.sb-item').forEach(el=>{
+    el.classList.toggle('active',el.dataset.id===id);
+  });
+  document.getElementById('page-title').textContent=NAV.find(n=>n.id===id)?.label||'';
+  document.getElementById('page-content').innerHTML=PAGES[id]();
+  initPage(id);
+}
+
+function initSidebar(){
+  const nav=document.getElementById('sb-nav');
+  nav.innerHTML=NAV.map(n=>`<div class="sb-item${n.id===activeTab?' active':''}" data-id="${n.id}" onclick="setPage('${n.id}')"><i class="ti ${n.icon}" aria-hidden="true"></i> ${n.label}</div>`).join('');
+}
+
+function showModal(html){
+  const root=document.getElementById('modal-root');
+  root.innerHTML=`<div class="modal-overlay" onclick="if(event.target===this)closeModal()">${html}</div>`;
+}
+function closeModal(){document.getElementById('modal-root').innerHTML='';}
+
+function toast(msg,type='success'){
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:24px;right:24px;background:#1a1a18;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:9999;animation:fadeIn .2s';
+  t.innerHTML=`<i class="ti ${type==='success'?'ti-check':'ti-alert-circle'}" style="margin-right:6px"></i>${msg}`;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2800);
+}
+
+const TABLES_DATA=[
+  {id:1,num:'T-01',cap:4,status:'occupied',waiter:'Ravi M.',zone:'Zone A',order:'#ORD-042'},
+  {id:2,num:'T-02',cap:2,status:'available',waiter:'-',zone:'Zone A',order:'-'},
+  {id:3,num:'T-03',cap:6,status:'occupied',waiter:'Priya S.',zone:'Zone B',order:'#ORD-043'},
+  {id:4,num:'T-04',cap:4,status:'cleaning',waiter:'-',zone:'Zone B',order:'-'},
+  {id:5,num:'T-05',cap:8,status:'available',waiter:'-',zone:'Zone C',order:'-'},
+  {id:6,num:'T-06',cap:4,status:'occupied',waiter:'Arjun K.',zone:'Zone A',order:'#ORD-044'},
+  {id:7,num:'T-07',cap:2,status:'available',waiter:'-',zone:'Zone C',order:'-'},
+  {id:8,num:'T-08',cap:6,status:'occupied',waiter:'Ravi M.',zone:'Zone B',order:'#ORD-045'},
+  {id:9,num:'T-09',cap:4,status:'available',waiter:'-',zone:'Zone A',order:'-'},
+  {id:10,num:'T-10',cap:4,status:'cleaning',waiter:'-',zone:'Zone C',order:'-'},
+];
+
+const MENU_DATA=[
+  {id:1,name:'Paneer Tikka',cat:'Starters',price:140,type:'veg',prep:15,station:'Grill',avail:true},
+  {id:2,name:'Chicken 65',cat:'Starters',price:180,type:'non-veg',prep:20,station:'Fry',avail:true},
+  {id:3,name:'Dal Makhani',cat:'Mains',price:160,type:'veg',prep:25,station:'Grill',avail:true},
+  {id:4,name:'Butter Chicken',cat:'Mains',price:220,type:'non-veg',prep:30,station:'Grill',avail:true},
+  {id:5,name:'Gulab Jamun',cat:'Desserts',price:80,type:'veg',prep:5,station:'Salad',avail:true},
+  {id:6,name:'Masala Chai',cat:'Drinks',price:40,type:'veg',prep:5,station:'Beverage',avail:true},
+  {id:7,name:'Mango Lassi',cat:'Drinks',price:70,type:'veg',prep:5,station:'Beverage',avail:false},
+  {id:8,name:'Fish Curry',cat:'Mains',price:240,type:'non-veg',prep:35,station:'Grill',avail:true},
+];
+
+const ORDERS_DATA=[
+  {id:'ORD-042',table:'T-01',waiter:'Ravi M.',items:'Paneer Tikka x2, Dal Makhani x1',total:440,status:'preparing',time:'12:34',pay:'pending'},
+  {id:'ORD-043',table:'T-03',waiter:'Priya S.',items:'Butter Chicken x2, Gulab Jamun x2',total:600,status:'ready',time:'12:21',pay:'pending'},
+  {id:'ORD-044',table:'T-06',waiter:'Arjun K.',items:'Chicken 65 x1, Masala Chai x2',total:260,status:'delivered',time:'12:10',pay:'paid'},
+  {id:'ORD-045',table:'T-08',waiter:'Ravi M.',items:'Fish Curry x2, Mango Lassi x2',total:620,status:'pending',time:'12:40',pay:'pending'},
+  {id:'ORD-040',table:'T-02',waiter:'Priya S.',items:'Paneer Tikka x1, Masala Chai x1',total:180,status:'paid',time:'11:55',pay:'paid'},
+];
+
+const STAFF_DATA=[
+  {id:1,name:'Ravi Mahesh',phone:'9876543210',role:'waiter',tables:['T-01','T-08'],status:'busy',email:'ravi@rest.com'},
+  {id:2,name:'Priya Sharma',phone:'9876543211',role:'waiter',tables:['T-03','T-02'],status:'available',email:'priya@rest.com'},
+  {id:3,name:'Arjun Kumar',phone:'9876543212',role:'waiter',tables:['T-06'],status:'busy',email:'arjun@rest.com'},
+  {id:4,name:'Chef Suman',phone:'9876543213',role:'head-chef',tables:[],status:'busy',email:'suman@rest.com'},
+  {id:5,name:'Suresh B.',phone:'9876543214',role:'kitchen-staff',tables:[],status:'available',email:'suresh@rest.com'},
+];
+
+const statusBadge={
+  available:'<span class="badge badge-green">Available</span>',
+  occupied:'<span class="badge badge-amber">Occupied</span>',
+  cleaning:'<span class="badge badge-red">Cleaning</span>',
+  pending:'<span class="badge badge-gray">Pending</span>',
+  preparing:'<span class="badge badge-amber">Preparing</span>',
+  ready:'<span class="badge badge-blue">Ready</span>',
+  delivered:'<span class="badge badge-green">Delivered</span>',
+  paid:'<span class="badge badge-green" style="background:#e8f2eb">Paid</span>',
+  cancelled:'<span class="badge badge-red">Cancelled</span>',
+  busy:'<span class="badge badge-amber">Busy</span>',
+  offline:'<span class="badge badge-gray">Offline</span>',
+};
+
+const PAGES={
+  dashboard:()=>`
+<div class="metric-grid">
+  <div class="metric">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div class="metric-label">Today's Revenue</div>
+      <div class="metric-icon" style="background:linear-gradient(135deg,#fff0e0,var(--accent-light));color:var(--accent)"><i class="ti ti-currency-rupee" aria-hidden="true"></i></div>
+    </div>
+    <div class="metric-val">₹12,480</div>
+    <div class="metric-sub">↑ 14% vs yesterday</div>
+  </div>
+  <div class="metric">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div class="metric-label">Total Orders</div>
+      <div class="metric-icon" style="background:var(--blue-light);color:var(--blue)"><i class="ti ti-clipboard-list" aria-hidden="true"></i></div>
+    </div>
+    <div class="metric-val">38</div>
+    <div class="metric-sub">↑ 6 from yesterday</div>
+  </div>
+  <div class="metric">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div class="metric-label">Active Tables</div>
+      <div class="metric-icon" style="background:var(--amber-light);color:var(--amber)"><i class="ti ti-layout-grid" aria-hidden="true"></i></div>
+    </div>
+    <div class="metric-val">4 / 10</div>
+    <div class="metric-sub">4 available, 2 cleaning</div>
+  </div>
+  <div class="metric">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div class="metric-label">Pending Orders</div>
+      <div class="metric-icon" style="background:var(--red-light);color:var(--red)"><i class="ti ti-clock" aria-hidden="true"></i></div>
+    </div>
+    <div class="metric-val">3</div>
+    <div class="metric-sub">Avg wait 12 min</div>
+  </div>
+</div>
+
+<div class="stat-row">
+  <div class="card">
+    <div class="section-title" style="margin-bottom:14px">Sales by Category</div>
+    <div class="chart-bar-wrap">
+      ${[['Mains',72,'#e06c00'],['Starters',58,'#1a4d8a'],['Drinks',34,'#5b2d8e'],['Desserts',21,'#0a7c5c']].map(([l,v,color])=>`
+      <div class="chart-bar-row">
+        <div class="chart-bar-label">${l}</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${v}%;background:${color}"></div></div>
+        <div class="chart-bar-val">${v}%</div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title" style="margin-bottom:14px">Order Status Overview</div>
+    <div class="chart-bar-wrap">
+      ${[['Paid',60,'#0a7c5c'],['Delivered',15,'#e06c00'],['Preparing',12,'#1a4d8a'],['Pending',8,'#b8620a'],['Cancelled',5,'#c0392b']].map(([l,v,color])=>`
+      <div class="chart-bar-row">
+        <div class="chart-bar-label">${l}</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${v}%;background:${color}"></div></div>
+        <div class="chart-bar-val">${v}%</div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div class="section-title" style="margin-bottom:0">Live Orders</div>
+    <span class="badge badge-green"><i class="ti ti-circle-filled" style="font-size:8px"></i> Live</span>
+  </div>
+  ${ORDERS_DATA.filter(o=>o.status!=='paid').map(o=>`
+  <div class="order-card">
+    <div class="order-hdr">
+      <span style="font-weight:600">#${o.id}</span>
+      ${statusBadge[o.status]||''}
+    </div>
+    <div class="order-items">${o.items}</div>
+    <div class="order-footer">
+      <span style="font-size:12px;color:var(--text3)">${o.table} · ${o.waiter} · ${o.time}</span>
+      <span style="font-weight:600">₹${o.total}</span>
+    </div>
+  </div>`).join('')}
+</div>`,
+
+  tables:()=>`
+<div class="page-hdr">
+  <h2>Table Management</h2>
+  <button class="btn btn-primary" onclick="openTableForm()"><i class="ti ti-plus" aria-hidden="true"></i> Add Table</button>
+</div>
+
+<div id="tables-view">
+<div class="tabs" id="table-tabs">
+  <div class="tab active" onclick="switchTableView('list',this)">List View</div>
+  <div class="tab" onclick="switchTableView('map',this)">Live Map</div>
+</div>
+<div id="tables-inner"></div>
+</div>`,
+
+  menu:()=>`
+<div class="page-hdr">
+  <h2>Menu Management</h2>
+  <button class="btn btn-primary" onclick="openMenuForm()"><i class="ti ti-plus" aria-hidden="true"></i> Add Item</button>
+</div>
+<div class="filters">
+  <div class="search-box"><i class="ti ti-search" aria-hidden="true"></i><input type="text" placeholder="Search items..." oninput="filterMenu(this.value)" id="menu-search"></div>
+  <select onchange="filterMenu()" id="menu-cat-filter">
+    <option value="">All Categories</option>
+    <option>Starters</option><option>Mains</option><option>Desserts</option><option>Drinks</option>
+  </select>
+  <select onchange="filterMenu()" id="menu-type-filter">
+    <option value="">All Types</option>
+    <option value="veg">Veg</option><option value="non-veg">Non-Veg</option>
+  </select>
+</div>
+<div class="card" style="padding:0">
+  <div class="table-wrap">
+    <table id="menu-table">
+      <thead><tr>
+        <th>Item</th><th>Category</th><th>Price</th><th>Type</th>
+        <th>Prep Time</th><th>Station</th><th>Available</th><th>Actions</th>
+      </tr></thead>
+      <tbody id="menu-tbody"></tbody>
+    </table>
+  </div>
+</div>`,
+
+  orders:()=>`
+<div class="page-hdr">
+  <h2>Order Management</h2>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-outline btn-sm"><i class="ti ti-download" aria-hidden="true"></i> Export</button>
+  </div>
+</div>
+<div class="filters">
+  <select id="ord-status-filter" onchange="filterOrders()">
+    <option value="">All Statuses</option>
+    <option>pending</option><option>preparing</option><option>ready</option><option>delivered</option><option>paid</option><option>cancelled</option>
+  </select>
+  <select id="ord-waiter-filter" onchange="filterOrders()">
+    <option value="">All Waiters</option>
+    <option>Ravi M.</option><option>Priya S.</option><option>Arjun K.</option>
+  </select>
+  <input type="date" style="width:auto;font-size:12px;padding:6px 10px" value="2026-05-28">
+</div>
+<div class="card" style="padding:0">
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Order #</th><th>Table</th><th>Waiter</th><th>Items</th>
+        <th>Total</th><th>Status</th><th>Time</th><th>Payment</th><th>Actions</th>
+      </tr></thead>
+      <tbody id="orders-tbody"></tbody>
+    </table>
+  </div>
+</div>`,
+
+  billing:()=>`
+<div class="page-hdr">
+  <h2>Billing</h2>
+</div>
+<div class="alert alert-info"><i class="ti ti-info-circle" aria-hidden="true"></i> Select a table or order to generate a bill</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+  <div>
+    <div class="section-title">Select Table</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px">
+      ${TABLES_DATA.filter(t=>t.status==='occupied').map(t=>`
+      <div class="table-cell occupied" onclick="loadBill('${t.id}')" style="cursor:pointer">
+        <div class="t-num">${t.num}</div>
+        <div class="t-info">${t.waiter}</div>
+        <div class="t-status"><span class="badge badge-amber">Occupied</span></div>
+      </div>`).join('')}
+    </div>
+
+    <div class="section-title">Payment Method</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px" id="pay-methods">
+      ${['Cash','Card','UPI','Wallet'].map((m,i)=>`
+      <div onclick="selectPay(this,'${m}')" class="table-cell${i===2?' available':''}" style="padding:10px;cursor:pointer;text-align:center;${i===2?'border:2px solid var(--accent)':''}">
+        <i class="ti ti-${m==='Cash'?'cash':'credit-card'}" aria-hidden="true" style="font-size:20px;margin-bottom:4px;display:block"></i>
+        <div style="font-size:12px;font-weight:500">${m}</div>
+      </div>`).join('')}
+    </div>
+
+    <div class="section-title">Split Payment</div>
+    <div class="split-box">
+      <label>Split between</label>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <input type="number" id="split-n" value="2" min="2" max="10" style="width:70px" onchange="updateSplit()">
+        <span style="font-size:13px;color:var(--text2)">people</span>
+      </div>
+      <div id="split-result" style="font-size:13px;color:var(--text2)">Each person pays: <strong>₹110</strong></div>
+    </div>
+  </div>
+
+  <div class="card" id="bill-card">
+    <div class="section-title">Bill — Table T-01</div>
+    <div id="bill-lines">
+      ${[['Paneer Tikka x2','₹280'],['Dal Makhani x1','₹160']].map(([n,p])=>`
+      <div class="bill-row"><span>${n}</span><span>${p}</span></div>`).join('')}
+    </div>
+    <div style="margin-top:10px">
+      <div class="bill-row"><span>Subtotal</span><span>₹440</span></div>
+      <div class="bill-row"><span>CGST (2.5%)</span><span>₹11</span></div>
+      <div class="bill-row"><span>SGST (2.5%)</span><span>₹11</span></div>
+      <div class="bill-row" style="border-top:2px solid var(--border2);padding-top:8px"><span>Total</span><span>₹462</span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-primary" style="flex:1" onclick="toast('Payment processed successfully!')"><i class="ti ti-check" aria-hidden="true"></i> Process Payment</button>
+      <button class="btn btn-outline" onclick="toast('Receipt printed!')"><i class="ti ti-printer" aria-hidden="true"></i></button>
+    </div>
+  </div>
+</div>`,
+
+  reports:()=>`
+<div class="page-hdr">
+  <h2>Reports & Analytics</h2>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <div class="report-dropdown-wrap">
+      <select id="report-selector" onchange="switchReportBySelect(this.value)">
+        <optgroup label="Sales">
+          <option value="sales">💰 Sales Report</option>
+          <option value="orders">📋 Order Report</option>
+        </optgroup>
+        <optgroup label="Menu">
+          <option value="items">🍽️ Item Analytics</option>
+        </optgroup>
+      </select>
+      <i class="ti ti-chevron-down"></i>
+    </div>
+    <select style="width:auto;font-size:12px;padding:6px 10px">
+      <option>Today</option><option>This Week</option><option selected>This Month</option><option>Custom Range</option>
+    </select>
+    <button class="btn btn-outline btn-sm"><i class="ti ti-download" aria-hidden="true"></i> Export Excel</button>
+    <button class="btn btn-outline btn-sm"><i class="ti ti-file" aria-hidden="true"></i> Export PDF</button>
+  </div>
+</div>
+<div class="report-layout">
+  <div id="report-content"></div>
+</div>`,
+
+  staff:()=>`
+<div class="page-hdr"><h2>Staff Management</h2>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-outline" onclick="openStaffForm('kitchen')"><i class="ti ti-plus" aria-hidden="true"></i> Add Kitchen Staff</button>
+    <button class="btn btn-primary" onclick="openStaffForm('waiter')"><i class="ti ti-plus" aria-hidden="true"></i> Add Waiter</button>
+  </div>
+</div>
+<div class="tabs" id="staff-tabs">
+  <div class="tab active" onclick="switchStaff('waiters',this)">Waiters</div>
+  <div class="tab" onclick="switchStaff('kitchen',this)">Kitchen Staff</div>
+</div>
+<div id="staff-inner"></div>`,
+};
+
+function initPage(id){
+  if(id==='tables') initTables();
+  if(id==='menu') initMenu();
+  if(id==='orders') initOrders();
+  if(id==='reports') initReports();
+  if(id==='staff') initStaff();
+}
+
+function switchTableView(view,el){
+  document.querySelectorAll('#table-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const inner=document.getElementById('tables-inner');
+  if(view==='map'){
+    inner.innerHTML=`
+    <div style="margin-bottom:12px;display:flex;gap:8px">
+      <span style="font-size:12px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:50%;background:#8ec9a2;display:inline-block"></span> Available</span>
+      <span style="font-size:12px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:50%;background:#e0c97a;display:inline-block"></span> Occupied</span>
+      <span style="font-size:12px;display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:50%;background:#e5a09a;display:inline-block"></span> Cleaning</span>
+    </div>
+    <div class="table-map-grid">
+      ${TABLES_DATA.map(t=>`
+      <div class="table-cell ${t.status}" onclick="map Table(${t.id})">
+        <div class="t-num">${t.num}</div>
+        <div class="t-info">${t.cap} seats · ${t.zone}</div>
+        ${t.status==='occupied'?`<div class="t-info" style="color:var(--amber)">${t.order}</div>`:''}
+        <div class="t-status">${statusBadge[t.status]||''}</div>
+      </div>`).join('')}
+    </div>`;
+  } else {
+    inner.innerHTML=`<div class="card" style="padding:0"><div class="table-wrap"><table>
+      <thead><tr><th>Table</th><th>Capacity</th><th>Zone</th><th>Status</th><th>Waiter</th><th>Order</th><th>Actions</th></tr></thead>
+      <tbody>${TABLES_DATA.map(t=>`<tr>
+        <td><strong>${t.num}</strong></td>
+        <td>${t.cap} seats</td>
+        <td>${t.zone}</td>
+        <td>${statusBadge[t.status]||''}</td>
+        <td>${t.waiter}</td>
+        <td><span style="color:var(--text3)">${t.order}</span></td>
+        <td class="actions">
+          <div class="icon-btn" onclick="viewTable(${t.id})" title="View"><i class="ti ti-eye" aria-label="View"></i></div>
+          <div class="icon-btn" onclick="openTableForm(${t.id})" title="Edit"><i class="ti ti-edit" aria-label="Edit"></i></div>
+          <div class="icon-btn del" onclick="confirmDelete('table',${t.id})" title="Delete"><i class="ti ti-trash" aria-label="Delete"></i></div>
+        </td>
+      </tr>`).join('')}</tbody>
+    </table></div></div>`;
+  }
+}
+
+function initTables(){switchTableView('map',document.querySelector('#table-tabs .tab'));}
+
+function viewTable(id){
+  const t=TABLES_DATA.find(x=>x.id===id);
+  showModal(`<div class="modal">
+    <div class="modal-hdr"><h3>Table ${t.num} Details</h3><button class="icon-btn" onclick="closeModal()"><i class="ti ti-x" aria-label="Close"></i></button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div><label>Table Number</label><input value="${t.num}" readonly></div>
+        <div><label>Seating Capacity</label><input value="${t.cap} seats" readonly></div>
+        <div><label>Zone</label><input value="${t.zone}" readonly></div>
+        <div><label>Status</label><div style="margin-top:4px">${statusBadge[t.status]||''}</div></div>
+        <div><label>Assigned Waiter</label><input value="${t.waiter}" readonly></div>
+        <div><label>Current Order</label><input value="${t.order}" readonly></div>
+      </div>
+      <div style="margin-top:14px"><label>QR Code</label>
+        <div style="border:1px solid var(--border2);border-radius:8px;padding:12px;text-align:center;background:var(--cream)">
+          <div style="width:80px;height:80px;background:repeating-linear-gradient(45deg,#ccc 0,#ccc 2px,transparent 0,transparent 50%) 0/8px 8px,repeating-linear-gradient(-45deg,#ccc 0,#ccc 2px,transparent 0,transparent 50%) 0/8px 8px;margin:0 auto 8px"></div>
+          <div style="font-size:11px;color:var(--text3)">QR-${t.num}-2026</div>
+          <button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="toast('QR Code downloaded!')"><i class="ti ti-download" aria-hidden="true"></i> Download QR</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Close</button>
+      <button class="btn btn-primary" onclick="openTableForm(${t.id});closeModal()"><i class="ti ti-edit" aria-hidden="true"></i> Edit Table</button>
+    </div>
+  </div>`);
+}
+
+function openTableForm(id){
+  const t=id?TABLES_DATA.find(x=>x.id===id):null;
+  showModal(`<div class="modal">
+    <div class="modal-hdr"><h3>${t?'Edit':'Add'} Table</h3><button class="icon-btn" onclick="closeModal()"><i class="ti ti-x" aria-label="Close"></i></button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div><label>Table Number *</label><input placeholder="e.g. T-11" value="${t?t.num:''}"></div>
+        <div><label>Seating Capacity *</label><input type="number" min="1" max="20" placeholder="e.g. 4" value="${t?t.cap:''}"></div>
+        <div><label>Zone</label>
+          <div class="select-wrap">
+            <select><option value="">Select Zone</option><option${t&&t.zone==='Zone A'?' selected':''}>Zone A</option><option${t&&t.zone==='Zone B'?' selected':''}>Zone B</option><option${t&&t.zone==='Zone C'?' selected':''}>Zone C</option></select>
+            <i class="ti ti-chevron-down" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div><label>Assign Waiter</label>
+          <div class="select-wrap">
+            <select><option value="">Unassigned</option>${STAFF_DATA.filter(s=>s.role==='waiter').map(s=>`<option${t&&t.waiter===s.name.split(' ')[0]+' M.'?' selected':''}>${s.name}</option>`).join('')}</select>
+            <i class="ti ti-chevron-down" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div class="full"><label>Status</label>
+          <div class="select-wrap">
+            <select><option value="available"${!t||t.status==='available'?' selected':''}>Available</option><option value="occupied"${t&&t.status==='occupied'?' selected':''}>Occupied</option><option value="cleaning"${t&&t.status==='cleaning'?' selected':''}>Cleaning</option></select>
+            <i class="ti ti-chevron-down" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+      <div class="tip" style="margin-top:10px"><i class="ti ti-info-circle" aria-hidden="true"></i> QR code will be auto-generated on save</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal();toast('Table ${t?'updated':'created'} successfully!')"><i class="ti ti-check" aria-hidden="true"></i> ${t?'Update':'Create'} Table</button>
+    </div>
+  </div>`);
+}
+
+function initMenu(){
+  renderMenu(MENU_DATA);
+}
+
+function renderMenu(data){
+  document.getElementById('menu-tbody').innerHTML=data.map(m=>`<tr>
+    <td><strong>${m.name}</strong></td>
+    <td><span class="badge badge-blue" style="font-size:11px">${m.cat}</span></td>
+    <td><strong>₹${m.price}</strong></td>
+    <td><span class="cat-pill ${m.type==='veg'?'veg':'nonveg'}">${m.type==='veg'?'🟢':'🔴'} ${m.type}</span></td>
+    <td>${m.prep} min</td>
+    <td><span class="badge badge-gray">${m.station}</span></td>
+    <td>
+      <label class="toggle"><input type="checkbox"${m.avail?' checked':''} onchange="toast('Availability updated')"><span class="toggle-slider"></span></label>
+    </td>
+    <td class="actions">
+      <div class="icon-btn" onclick="openMenuForm(${m.id})" title="Edit"><i class="ti ti-edit" aria-label="Edit"></i></div>
+      <div class="icon-btn del" onclick="confirmDelete('menu',${m.id})" title="Delete"><i class="ti ti-trash" aria-label="Delete"></i></div>
+    </td>
+  </tr>`).join('');
+}
+
+function filterMenu(val){
+  const s=(document.getElementById('menu-search')||{value:''}).value.toLowerCase();
+  const c=(document.getElementById('menu-cat-filter')||{value:''}).value;
+  const t=(document.getElementById('menu-type-filter')||{value:''}).value;
+  renderMenu(MENU_DATA.filter(m=>
+    (!s||m.name.toLowerCase().includes(s))&&
+    (!c||m.cat===c)&&
+    (!t||m.type===t)
+  ));
+}
+
+function openMenuForm(id){
+  const m=id?MENU_DATA.find(x=>x.id===id):null;
+  showModal(`<div class="modal">
+    <div class="modal-hdr"><h3>${m?'Edit':'Add'} Menu Item</h3><button class="icon-btn" onclick="closeModal()"><i class="ti ti-x" aria-label="Close"></i></button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="full"><label>Item Name *</label><input placeholder="e.g. Paneer Tikka" value="${m?m.name:''}"></div>
+        <div><label>Category *</label>
+          <div class="select-wrap">
+            <select><option>Starters</option><option>Mains</option><option>Desserts</option><option>Drinks</option></select>
+            <i class="ti ti-chevron-down" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div><label>Price (₹) *</label><input type="number" placeholder="e.g. 140" value="${m?m.price:''}"></div>
+        <div><label>Type *</label>
+          <div class="select-wrap">
+            <select><option value="veg">Vegetarian</option><option value="non-veg">Non-Vegetarian</option></select>
+            <i class="ti ti-chevron-down" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div><label>Preparation Time (min) *</label><input type="number" placeholder="e.g. 15" value="${m?m.prep:''}"></div>
+        <div><label>Kitchen Station</label>
+          <div class="select-wrap">
+            <select><option>Grill</option><option>Fry</option><option>Salad</option><option>Beverage</option></select>
+            <i class="ti ti-chevron-down" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div class="full"><label>Description</label><textarea placeholder="Brief description of the dish...">${m?'Delicious '+m.name:''}</textarea></div>
+        <div class="full">
+          <label>Item Photo</label>
+          <div style="border:1.5px dashed var(--border2);border-radius:8px;padding:18px;text-align:center;background:var(--cream);cursor:pointer">
+            <i class="ti ti-cloud-upload" aria-hidden="true" style="font-size:24px;color:var(--text3)"></i>
+            <div style="font-size:12px;color:var(--text3);margin-top:4px">Click to upload or drag & drop</div>
+            <div style="font-size:11px;color:var(--text3)">PNG, JPG up to 2MB</div>
+          </div>
+        </div>
+        <div class="full" style="display:flex;align-items:center;gap:10px">
+          <label class="toggle"><input type="checkbox"${!m||m.avail?' checked':''}><span class="toggle-slider"></span></label>
+          <span style="font-size:13px">Mark as Available</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal();toast('Menu item ${m?'updated':'added'} successfully!')"><i class="ti ti-check" aria-hidden="true"></i> ${m?'Update':'Add'} Item</button>
+    </div>
+  </div>`);
+}
+
+function initOrders(){renderOrders(ORDERS_DATA);}
+function filterOrders(){
+  const s=(document.getElementById('ord-status-filter')||{value:''}).value;
+  const w=(document.getElementById('ord-waiter-filter')||{value:''}).value;
+  renderOrders(ORDERS_DATA.filter(o=>(!s||o.status===s)&&(!w||o.waiter===w)));
+}
+function renderOrders(data){
+  document.getElementById('orders-tbody').innerHTML=data.map(o=>`<tr>
+    <td><strong>#${o.id}</strong></td>
+    <td>${o.table}</td>
+    <td>${o.waiter}</td>
+    <td style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${o.items}</td>
+    <td><strong>₹${o.total}</strong></td>
+    <td>${statusBadge[o.status]||''}</td>
+    <td>${o.time}</td>
+    <td>${o.pay==='paid'?'<span class="badge badge-green">Paid</span>':'<span class="badge badge-gray">Pending</span>'}</td>
+    <td class="actions">
+      <div class="icon-btn" onclick="viewOrder('${o.id}')" title="View"><i class="ti ti-eye" aria-label="View"></i></div>
+      <div class="icon-btn" onclick="toast('Status updated!')" title="Update"><i class="ti ti-edit" aria-label="Edit"></i></div>
+      <div class="icon-btn del" onclick="confirmDelete('order','${o.id}')" title="Cancel"><i class="ti ti-x" aria-label="Cancel"></i></div>
+    </td>
+  </tr>`).join('');
+}
+
+function viewOrder(id){
+  const o=ORDERS_DATA.find(x=>x.id===id);
+  showModal(`<div class="modal">
+    <div class="modal-hdr"><h3>Order #${o.id}</h3><button class="icon-btn" onclick="closeModal()"><i class="ti ti-x" aria-label="Close"></i></button></div>
+    <div class="modal-body">
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        ${statusBadge[o.status]||''}
+        <span class="badge badge-blue">${o.table}</span>
+        <span class="badge badge-gray">${o.waiter}</span>
+      </div>
+      <div class="section-title">Order Items</div>
+      <div class="card" style="margin-bottom:14px">
+        ${o.items.split(', ').map(i=>`<div class="bill-row"><span>${i}</span><span style="color:var(--text3)">—</span></div>`).join('')}
+      </div>
+      <div class="section-title">Order Timeline</div>
+      <div class="timeline">
+        ${[['Order Placed','12:34',''],['Waiter Accepted','12:35',''],['Kitchen Started','12:38',''],['Ready to Serve',o.status==='preparing'?null:'12:52',''],['Delivered',o.status==='delivered'||o.status==='paid'?'12:55':null,''],['Paid',o.status==='paid'?'13:00':null,'']].map(([label,time])=>`
+        <div class="tl-item">
+          <div class="tl-dot${!time?' pending':''}"></div>
+          <div class="tl-line"></div>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:${time?'var(--text1)':'var(--text3)'}">${label}</div>
+            ${time?`<div style="font-size:11px;color:var(--text3)">${time}</div>`:'<div style="font-size:11px;color:var(--text3)">Pending</div>'}
+          </div>
+        </div>`).join('')}
+      </div>
+      <div class="section-title" style="margin-top:14px">Update Status</div>
+      <div class="select-wrap">
+        <select onchange="toast('Status updated to '+this.value)">
+          <option${o.status==='pending'?' selected':''}>pending</option>
+          <option${o.status==='preparing'?' selected':''}>preparing</option>
+          <option${o.status==='ready'?' selected':''}>ready</option>
+          <option${o.status==='delivered'?' selected':''}>delivered</option>
+          <option${o.status==='paid'?' selected':''}>paid</option>
+          <option>cancelled</option>
+        </select>
+        <i class="ti ti-chevron-down" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Close</button>
+      <button class="btn btn-primary" onclick="closeModal();toast('Order updated!')"><i class="ti ti-check" aria-hidden="true"></i> Save Changes</button>
+    </div>
+  </div>`);
+}
+
+function updateSplit(){
+  const n=parseInt(document.getElementById('split-n').value)||2;
+  const each=Math.round(462/n);
+  document.getElementById('split-result').innerHTML=`Each person pays: <strong>₹${each}</strong>`;
+}
+function selectPay(el,method){
+  document.querySelectorAll('#pay-methods .table-cell').forEach(c=>{c.style.border='1px solid var(--border)';c.classList.remove('available');});
+  el.style.border='2px solid var(--accent)';el.classList.add('available');
+}
+function loadBill(id){toast('Bill loaded for selected table');}
+
+const REPORT_CONTENT={
+  sales:`
+  <div class="metric-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
+    <div class="metric"><div class="metric-label">Total Sales</div><div class="metric-val">₹3,84,200</div><div class="metric-sub">↑ 12% vs last month</div></div>
+    <div class="metric"><div class="metric-label">Avg Order Value</div><div class="metric-val">₹387</div><div class="metric-sub">↑ 5% vs last month</div></div>
+    <div class="metric"><div class="metric-label">Total Transactions</div><div class="metric-val">992</div><div class="metric-sub">This month</div></div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="section-title" style="margin-bottom:14px">Daily Revenue Trend</div>
+    <div class="chart-bar-wrap">
+      ${[['Mon','62','#e06c00'],['Tue','78','#1a4d8a'],['Wed','55','#5b2d8e'],['Thu','90','#0a7c5c'],['Fri','95','#c0392b'],['Sat','88','#b8620a'],['Sun','71','#1a7abf']].map(([d,v,color])=>`
+      <div class="chart-bar-row">
+        <div class="chart-bar-label">${d}</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${v}%;background:${color}"></div></div>
+        <div class="chart-bar-val">₹${v}k</div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="card" style="padding:0">
+    <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="font-size:13px;font-weight:600">Transaction Details</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="search-box"><i class="ti ti-search"></i><input type="text" id="sales-search" placeholder="Search date, table, amount..." oninput="filterSalesTable()" style="width:220px;font-size:12px;padding:6px 8px 6px 28px"></div>
+        <select id="sales-status-filter" onchange="filterSalesTable()" style="width:auto;font-size:12px;padding:6px 10px"><option value="">All Status</option><option>paid</option><option>pending</option><option>cancelled</option></select>
+        <button class="btn btn-outline btn-sm" onclick="toast('Exported!')"><i class="ti ti-download"></i> Export</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="sales-table">
+        <thead><tr>
+          <th>Date</th><th>Order #</th><th>Table</th><th>Waiter</th><th>Items</th><th>Subtotal</th><th>Tax</th><th>Total</th><th>Status</th>
+        </tr></thead>
+        <tbody id="sales-tbody"></tbody>
+      </table>
+    </div>
+    <div style="padding:10px 16px;font-size:12px;color:var(--text3)" id="sales-count"></div>
+  </div>`,
+
+  orders:`
+  <div class="metric-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px">
+    <div class="metric"><div class="metric-label">Total Orders</div><div class="metric-val">992</div><div class="metric-sub">This month</div></div>
+    <div class="metric"><div class="metric-label">Completed</div><div class="metric-val">880</div><div class="metric-sub">88.7% completion</div></div>
+    <div class="metric"><div class="metric-label">Cancelled</div><div class="metric-val">42</div><div class="metric-sub">4.2% rate</div></div>
+    <div class="metric"><div class="metric-label">Avg Prep Time</div><div class="metric-val">18 min</div><div class="metric-sub">↓ 2 min vs last month</div></div>
+  </div>
+  <div class="card" style="padding:0">
+    <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="font-size:13px;font-weight:600">Order Details</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="search-box"><i class="ti ti-search"></i><input type="text" id="rep-ord-search" placeholder="Search order, table, waiter..." oninput="filterRepOrderTable()" style="width:230px;font-size:12px;padding:6px 8px 6px 28px"></div>
+        <select id="rep-ord-status" onchange="filterRepOrderTable()" style="width:auto;font-size:12px;padding:6px 10px"><option value="">All Status</option><option>pending</option><option>preparing</option><option>ready</option><option>delivered</option><option>paid</option><option>cancelled</option></select>
+        <select id="rep-ord-waiter" onchange="filterRepOrderTable()" style="width:auto;font-size:12px;padding:6px 10px"><option value="">All Waiters</option><option>Ravi M.</option><option>Priya S.</option><option>Arjun K.</option></select>
+        <button class="btn btn-outline btn-sm" onclick="toast('Exported!')"><i class="ti ti-download"></i> Export</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="rep-ord-table">
+        <thead><tr>
+          <th>Order #</th><th>Date</th><th>Table</th><th>Waiter</th><th>Items</th><th>Total</th><th>Status</th><th>Payment</th><th>Time</th>
+        </tr></thead>
+        <tbody id="rep-ord-tbody"></tbody>
+      </table>
+    </div>
+    <div style="padding:10px 16px;font-size:12px;color:var(--text3)" id="rep-ord-count"></div>
+  </div>`,
+
+  items:`
+  <div class="card" style="margin-bottom:16px">
+    <div class="section-title" style="margin-bottom:14px">Sales by Category</div>
+    <div class="chart-bar-wrap">
+      ${[['Mains',72,'#e06c00'],['Starters',58,'#1a4d8a'],['Drinks',34,'#5b2d8e'],['Desserts',21,'#0a7c5c']].map(([l,v,color])=>`
+      <div class="chart-bar-row">
+        <div class="chart-bar-label">${l}</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${v}%;background:${color}"></div></div>
+        <div class="chart-bar-val">${v}%</div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="card" style="padding:0">
+    <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="font-size:13px;font-weight:600">Item Analytics</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="search-box"><i class="ti ti-search"></i><input type="text" id="items-search" placeholder="Search item name..." oninput="filterItemsTable()" style="width:200px;font-size:12px;padding:6px 8px 6px 28px"></div>
+        <select id="items-cat-filter" onchange="filterItemsTable()" style="width:auto;font-size:12px;padding:6px 10px"><option value="">All Categories</option><option>Starters</option><option>Mains</option><option>Desserts</option><option>Drinks</option></select>
+        <select id="items-trend-filter" onchange="filterItemsTable()" style="width:auto;font-size:12px;padding:6px 10px"><option value="">All Trends</option><option value="↑">Trending Up ↑</option><option value="→">Stable →</option><option value="↓">Trending Down ↓</option></select>
+        <button class="btn btn-outline btn-sm" onclick="toast('Exported!')"><i class="ti ti-download"></i> Export</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="items-table">
+        <thead><tr>
+          <th>Item</th><th>Category</th><th>Type</th><th>Orders</th><th>Revenue</th><th>Avg Price</th><th>Trend</th>
+        </tr></thead>
+        <tbody id="items-tbody"></tbody>
+      </table>
+    </div>
+    <div style="padding:10px 16px;font-size:12px;color:var(--text3)" id="items-count"></div>
+  </div>`,
+};
+
+const SALES_DATA=[
+  {date:'28 May',order:'ORD-042',table:'T-01',waiter:'Ravi M.',items:'Paneer Tikka x2, Dal Makhani x1',subtotal:440,tax:22,total:462,status:'paid'},
+  {date:'28 May',order:'ORD-043',table:'T-03',waiter:'Priya S.',items:'Butter Chicken x2, Gulab Jamun x2',subtotal:560,tax:28,total:588,status:'paid'},
+  {date:'28 May',order:'ORD-044',table:'T-06',waiter:'Arjun K.',items:'Chicken 65 x1, Masala Chai x2',subtotal:260,tax:13,total:273,status:'paid'},
+  {date:'28 May',order:'ORD-045',table:'T-08',waiter:'Ravi M.',items:'Fish Curry x2, Mango Lassi x2',subtotal:620,tax:31,total:651,status:'pending'},
+  {date:'27 May',order:'ORD-040',table:'T-02',waiter:'Priya S.',items:'Paneer Tikka x1, Masala Chai x1',subtotal:180,tax:9,total:189,status:'paid'},
+  {date:'27 May',order:'ORD-038',table:'T-05',waiter:'Arjun K.',items:'Dal Makhani x2, Gulab Jamun x1',subtotal:400,tax:20,total:420,status:'paid'},
+  {date:'27 May',order:'ORD-037',table:'T-09',waiter:'Ravi M.',items:'Butter Chicken x1',subtotal:220,tax:11,total:231,status:'cancelled'},
+  {date:'26 May',order:'ORD-035',table:'T-04',waiter:'Priya S.',items:'Fish Curry x1, Masala Chai x2',subtotal:320,tax:16,total:336,status:'paid'},
+  {date:'26 May',order:'ORD-033',table:'T-07',waiter:'Arjun K.',items:'Chicken 65 x2, Mango Lassi x1',subtotal:430,tax:21,total:451,status:'paid'},
+  {date:'25 May',order:'ORD-030',table:'T-01',waiter:'Ravi M.',items:'Paneer Tikka x3, Dal Makhani x2',subtotal:740,tax:37,total:777,status:'paid'},
+];
+
+const REP_ORDERS_DATA=[
+  {id:'ORD-042',date:'28 May',table:'T-01',waiter:'Ravi M.',items:'Paneer Tikka x2, Dal Makhani x1',total:462,status:'paid',pay:'paid',time:'12:34'},
+  {id:'ORD-043',date:'28 May',table:'T-03',waiter:'Priya S.',items:'Butter Chicken x2, Gulab Jamun x2',total:588,status:'ready',pay:'pending',time:'12:21'},
+  {id:'ORD-044',date:'28 May',table:'T-06',waiter:'Arjun K.',items:'Chicken 65 x1, Masala Chai x2',total:273,status:'delivered',pay:'paid',time:'12:10'},
+  {id:'ORD-045',date:'28 May',table:'T-08',waiter:'Ravi M.',items:'Fish Curry x2, Mango Lassi x2',total:651,status:'pending',pay:'pending',time:'12:40'},
+  {id:'ORD-040',date:'27 May',table:'T-02',waiter:'Priya S.',items:'Paneer Tikka x1, Masala Chai x1',total:189,status:'paid',pay:'paid',time:'11:55'},
+  {id:'ORD-038',date:'27 May',table:'T-05',waiter:'Arjun K.',items:'Dal Makhani x2, Gulab Jamun x1',total:420,status:'paid',pay:'paid',time:'13:10'},
+  {id:'ORD-037',date:'27 May',table:'T-09',waiter:'Ravi M.',items:'Butter Chicken x1',total:231,status:'cancelled',pay:'pending',time:'14:02'},
+  {id:'ORD-035',date:'26 May',table:'T-04',waiter:'Priya S.',items:'Fish Curry x1, Masala Chai x2',total:336,status:'paid',pay:'paid',time:'12:50'},
+  {id:'ORD-033',date:'26 May',table:'T-07',waiter:'Arjun K.',items:'Chicken 65 x2, Mango Lassi x1',total:451,status:'paid',pay:'paid',time:'13:30'},
+  {id:'ORD-030',date:'25 May',table:'T-01',waiter:'Ravi M.',items:'Paneer Tikka x3, Dal Makhani x2',total:777,status:'paid',pay:'paid',time:'19:05'},
+];
+
+const ITEMS_ANALYTICS=[
+  {name:'Butter Chicken',cat:'Mains',type:'non-veg',orders:340,revenue:74800,avg:220,trend:'↑'},
+  {name:'Paneer Tikka',cat:'Starters',type:'veg',orders:290,revenue:40600,avg:140,trend:'↑'},
+  {name:'Dal Makhani',cat:'Mains',type:'veg',orders:240,revenue:38400,avg:160,trend:'→'},
+  {name:'Chicken 65',cat:'Starters',type:'non-veg',orders:188,revenue:33840,avg:180,trend:'↓'},
+  {name:'Mango Lassi',cat:'Drinks',type:'veg',orders:160,revenue:11200,avg:70,trend:'↑'},
+  {name:'Fish Curry',cat:'Mains',type:'non-veg',orders:145,revenue:34800,avg:240,trend:'↑'},
+  {name:'Masala Chai',cat:'Drinks',type:'veg',orders:310,revenue:12400,avg:40,trend:'→'},
+  {name:'Gulab Jamun',cat:'Desserts',type:'veg',orders:122,revenue:9760,avg:80,trend:'↓'},
+];
+
+function renderSalesTable(data){
+  const tb=document.getElementById('sales-tbody');
+  if(!tb)return;
+  tb.innerHTML=data.map(r=>`<tr>
+    <td>${r.date}</td>
+    <td><strong>#${r.order}</strong></td>
+    <td>${r.table}</td>
+    <td>${r.waiter}</td>
+    <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.items}</td>
+    <td>₹${r.subtotal}</td>
+    <td style="color:var(--text3)">₹${r.tax}</td>
+    <td><strong>₹${r.total}</strong></td>
+    <td>${r.status==='paid'?'<span class="badge badge-green">Paid</span>':r.status==='pending'?'<span class="badge badge-amber">Pending</span>':'<span class="badge badge-red">Cancelled</span>'}</td>
+  </tr>`).join('');
+  const cnt=document.getElementById('sales-count');
+  if(cnt)cnt.textContent=`Showing ${data.length} of ${SALES_DATA.length} transactions`;
+}
+function filterSalesTable(){
+  const q=(document.getElementById('sales-search')||{value:''}).value.toLowerCase();
+  const s=(document.getElementById('sales-status-filter')||{value:''}).value;
+  renderSalesTable(SALES_DATA.filter(r=>{
+    const match=!q||(r.date+r.order+r.table+r.waiter+r.items+r.total).toLowerCase().includes(q);
+    const st=!s||r.status===s;
+    return match&&st;
+  }));
+}
+
+function renderRepOrderTable(data){
+  const tb=document.getElementById('rep-ord-tbody');
+  if(!tb)return;
+  tb.innerHTML=data.map(o=>`<tr>
+    <td><strong>#${o.id}</strong></td>
+    <td>${o.date}</td>
+    <td>${o.table}</td>
+    <td>${o.waiter}</td>
+    <td style="max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${o.items}</td>
+    <td><strong>₹${o.total}</strong></td>
+    <td>${statusBadge[o.status]||''}</td>
+    <td>${o.pay==='paid'?'<span class="badge badge-green">Paid</span>':'<span class="badge badge-gray">Pending</span>'}</td>
+    <td style="color:var(--text3)">${o.time}</td>
+  </tr>`).join('');
+  const cnt=document.getElementById('rep-ord-count');
+  if(cnt)cnt.textContent=`Showing ${data.length} of ${REP_ORDERS_DATA.length} orders`;
+}
+function filterRepOrderTable(){
+  const q=(document.getElementById('rep-ord-search')||{value:''}).value.toLowerCase();
+  const s=(document.getElementById('rep-ord-status')||{value:''}).value;
+  const w=(document.getElementById('rep-ord-waiter')||{value:''}).value;
+  renderRepOrderTable(REP_ORDERS_DATA.filter(o=>{
+    const match=!q||(o.id+o.date+o.table+o.waiter+o.items).toLowerCase().includes(q);
+    return match&&(!s||o.status===s)&&(!w||o.waiter===w);
+  }));
+}
+
+function renderItemsTable(data){
+  const tb=document.getElementById('items-tbody');
+  if(!tb)return;
+  tb.innerHTML=data.map(it=>`<tr>
+    <td><strong>${it.name}</strong></td>
+    <td><span class="badge badge-blue" style="font-size:11px">${it.cat}</span></td>
+    <td><span class="cat-pill ${it.type==='veg'?'veg':'nonveg'}">${it.type==='veg'?'🟢':'🔴'} ${it.type}</span></td>
+    <td>${it.orders}</td>
+    <td><strong>₹${it.revenue.toLocaleString('en-IN')}</strong></td>
+    <td>₹${it.avg}</td>
+    <td style="color:${it.trend==='↑'?'#0a7c5c':it.trend==='↓'?'var(--red)':'var(--amber)'};font-weight:700;font-size:15px">${it.trend}</td>
+  </tr>`).join('');
+  const cnt=document.getElementById('items-count');
+  if(cnt)cnt.textContent=`Showing ${data.length} of ${ITEMS_ANALYTICS.length} items`;
+}
+function filterItemsTable(){
+  const q=(document.getElementById('items-search')||{value:''}).value.toLowerCase();
+  const c=(document.getElementById('items-cat-filter')||{value:''}).value;
+  const t=(document.getElementById('items-trend-filter')||{value:''}).value;
+  renderItemsTable(ITEMS_ANALYTICS.filter(it=>{
+    return (!q||it.name.toLowerCase().includes(q))&&(!c||it.cat===c)&&(!t||it.trend===t);
+  }));
+}
+
+function initReports(){switchReportById('sales');}
+function switchReportBySelect(id){switchReportById(id);}
+function switchReportById(id){
+  const sel=document.getElementById('report-selector');
+  if(sel)sel.value=id;
+  document.getElementById('report-content').innerHTML=REPORT_CONTENT[id]||'<div class="empty-state"><i class="ti ti-chart-bar" aria-hidden="true"></i>No data</div>';
+  if(id==='sales')renderSalesTable(SALES_DATA);
+  if(id==='orders')renderRepOrderTable(REP_ORDERS_DATA);
+  if(id==='items')renderItemsTable(ITEMS_ANALYTICS);
+}
+
+function initStaff(){switchStaff('waiters',document.querySelector('#staff-tabs .tab'));}
+function switchStaff(type,el){
+  document.querySelectorAll('#staff-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const data=STAFF_DATA.filter(s=>type==='waiters'?s.role==='waiter':s.role!=='waiter');
+  document.getElementById('staff-inner').innerHTML=`
+  <div style="display:flex;flex-direction:column;gap:10px">
+    ${data.map(s=>`
+    <div class="staff-card">
+      <div class="avatar" style="width:40px;height:40px;font-size:14px">${s.name.split(' ').map(n=>n[0]).join('')}</div>
+      <div class="staff-info">
+        <div class="staff-name">${s.name}</div>
+        <div class="staff-meta">
+          <i class="ti ti-phone" aria-hidden="true"></i> ${s.phone}
+          ${s.tables.length?` &nbsp;·&nbsp; <i class="ti ti-layout-grid" aria-hidden="true"></i> ${s.tables.join(', ')}`:''}
+          &nbsp;·&nbsp; <span class="badge badge-gray" style="font-size:10px">${s.role}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        ${statusBadge[s.status]||''}
+        <div class="icon-btn" onclick="openStaffForm('${s.role}',${s.id})" title="Edit"><i class="ti ti-edit" aria-label="Edit"></i></div>
+        <div class="icon-btn del" onclick="confirmDelete('staff',${s.id})" title="Delete"><i class="ti ti-trash" aria-label="Delete"></i></div>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function openStaffForm(role,id){
+  const s=id?STAFF_DATA.find(x=>x.id===id):null;
+  const isWaiter=role==='waiter';
+  showModal(`<div class="modal">
+    <div class="modal-hdr"><h3>${s?'Edit':'Add'} ${isWaiter?'Waiter':'Kitchen Staff'}</h3><button class="icon-btn" onclick="closeModal()"><i class="ti ti-x" aria-label="Close"></i></button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="full"><label>Full Name *</label><input placeholder="e.g. Ravi Mahesh" value="${s?s.name:''}"></div>
+        <div><label>Phone Number *</label><input type="tel" placeholder="10-digit number" value="${s?s.phone:''}" maxlength="10"></div>
+        <div><label>Email</label><input type="email" placeholder="Optional" value="${s?s.email:''}"></div>
+        ${isWaiter?`
+        <div class="full"><label>Assign Tables</label>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:2px">
+            ${TABLES_DATA.map(t=>`<label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer"><input type="checkbox" ${s&&s.tables.includes(t.num)?'checked':''}> ${t.num}</label>`).join('')}
+          </div>
+        </div>`:
+        `<div><label>Role *</label>
+          <div class="select-wrap">
+            <select><option value="head-chef">Head Chef</option><option value="kitchen-staff"${s&&s.role==='kitchen-staff'?' selected':''}>Kitchen Staff</option><option value="compiler">Compiler</option></select>
+            <i class="ti ti-chevron-down" aria-hidden="true"></i>
+          </div>
+        </div>`}
+        <div><label>Status</label>
+          <div class="select-wrap">
+            <select><option value="available"${!s||s.status==='available'?' selected':''}>Available</option><option value="busy"${s&&s.status==='busy'?' selected':''}>Busy</option><option value="offline"${s&&s.status==='offline'?' selected':''}>Offline</option></select>
+            <i class="ti ti-chevron-down" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+      <div class="tip" style="margin-top:10px"><i class="ti ti-info-circle" aria-hidden="true"></i> OTP login will be sent to the provided phone number</div>
+    </div>
+    <div class="modal-footer">
+      ${s?`<button class="btn btn-danger btn-sm" onclick="closeModal();toast('Staff removed','warn')"><i class="ti ti-trash" aria-hidden="true"></i> Remove</button>`:''}
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal();toast('Staff ${s?'updated':'added'} successfully!')"><i class="ti ti-check" aria-hidden="true"></i> ${s?'Update':'Add'} Staff</button>
+    </div>
+  </div>`);
+}
+
+function confirmDelete(type,id){
+  showModal(`<div class="modal" style="width:380px">
+    <div class="modal-hdr"><h3>Confirm Delete</h3><button class="icon-btn" onclick="closeModal()"><i class="ti ti-x" aria-label="Close"></i></button></div>
+    <div class="modal-body">
+      <div style="text-align:center;padding:10px 0">
+        <i class="ti ti-alert-triangle" aria-hidden="true" style="font-size:40px;color:var(--red);margin-bottom:8px;display:block"></i>
+        <p style="font-size:14px;color:var(--text1)">Are you sure you want to delete this ${type}?</p>
+        <p style="font-size:13px;color:var(--text3);margin-top:4px">This action cannot be undone.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="closeModal();toast('Deleted successfully')"><i class="ti ti-trash" aria-hidden="true"></i> Yes, Delete</button>
+    </div>
+  </div>`);
+}
+
+initSidebar();
+setPage('dashboard');
+</script>
