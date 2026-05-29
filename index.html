@@ -58,6 +58,11 @@ tr:hover td{background:#f9fafb}
 .sb-item:hover{background:var(--cream);color:var(--text1)}
 .sb-item.active{background:var(--accent-light);color:var(--accent);border-left-color:var(--accent);font-weight:600}
 .sb-item i{font-size:16px;width:18px}
+.sb-submenu{max-height:0;overflow:hidden;display:flex;flex-direction:column;background:#fafbfc;transition:max-height 0.25s ease-out}
+.sb-submenu.open{max-height:150px;padding:4px 0;border-bottom:1px solid var(--border)}
+.sb-subitem{display:flex;align-items:center;gap:8px;padding:8px 20px 8px 48px;cursor:pointer;color:var(--text2);font-size:12.5px;font-weight:500;transition:.12s}
+.sb-subitem:hover{background:var(--cream);color:var(--text1)}
+.sb-subitem.active{background:var(--accent-light);color:var(--accent);font-weight:600}
 .sb-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
 .avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
 .main{margin-left:220px;min-height:100vh;display:flex;flex-direction:column}
@@ -193,6 +198,7 @@ const NAV=[
 ];
 
 let activeTab='dashboard';
+let activeReport='sales';
 let modal=null;
 
 function setPage(id){
@@ -200,6 +206,18 @@ function setPage(id){
   document.querySelectorAll('.sb-item').forEach(el=>{
     el.classList.toggle('active',el.dataset.id===id);
   });
+
+  const submenu = document.getElementById('submenu-reports');
+  const chevron = document.querySelector('.submenu-chevron');
+  if (id === 'reports') {
+    if (submenu) submenu.classList.add('open');
+    if (chevron) chevron.style.transform = 'rotate(-180deg)';
+  } else {
+    if (submenu) submenu.classList.remove('open');
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+    document.querySelectorAll('.sb-subitem').forEach(el => el.classList.remove('active'));
+  }
+
   document.getElementById('page-title').textContent=NAV.find(n=>n.id===id)?.label||'';
   document.getElementById('page-content').innerHTML=PAGES[id]();
   initPage(id);
@@ -207,7 +225,63 @@ function setPage(id){
 
 function initSidebar(){
   const nav=document.getElementById('sb-nav');
-  nav.innerHTML=NAV.map(n=>`<div class="sb-item${n.id===activeTab?' active':''}" data-id="${n.id}" onclick="setPage('${n.id}')"><i class="ti ${n.icon}" aria-hidden="true"></i> ${n.label}</div>`).join('');
+  nav.innerHTML=NAV.map(n=>{
+    if (n.id === 'reports') {
+      return `
+        <div class="sb-item-wrapper">
+          <div class="sb-item${n.id===activeTab?' active':''}" data-id="${n.id}" onclick="handleReportsClick(event)">
+            <i class="ti ${n.icon}" aria-hidden="true"></i> 
+            <span>${n.label}</span>
+            <i class="ti ti-chevron-down submenu-chevron" style="margin-left:auto;font-size:12px;transition:transform 0.2s"></i>
+          </div>
+          <div class="sb-submenu" id="submenu-reports">
+            <div class="sb-subitem" data-report="sales" onclick="setReportPage('sales')">💰 Sales Report</div>
+            <div class="sb-subitem" data-report="orders" onclick="setReportPage('orders')">📋 Order Report</div>
+            <div class="sb-subitem" data-report="items" onclick="setReportPage('items')">🍽️ Item Analytics</div>
+          </div>
+        </div>
+      `;
+    }
+    return `<div class="sb-item${n.id===activeTab?' active':''}" data-id="${n.id}" onclick="setPage('${n.id}')"><i class="ti ${n.icon}" aria-hidden="true"></i> ${n.label}</div>`;
+  }).join('');
+}
+
+function handleReportsClick(event) {
+  event.stopPropagation();
+  const submenu = document.getElementById('submenu-reports');
+  const chevron = document.querySelector('.submenu-chevron');
+  const isClosed = !submenu || !submenu.classList.contains('open');
+  
+  if (isClosed) {
+    if (submenu) submenu.classList.add('open');
+    if (chevron) chevron.style.transform = 'rotate(-180deg)';
+    setReportPage(activeReport);
+  } else {
+    if (submenu) submenu.classList.remove('open');
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
+  }
+}
+
+function setReportPage(reportId) {
+  activeReport = reportId;
+  if (activeTab !== 'reports') {
+    setPage('reports');
+  } else {
+    switchReportById(reportId);
+  }
+  
+  document.querySelectorAll('.sb-subitem').forEach(el => {
+    el.classList.toggle('active', el.dataset.report === reportId);
+  });
+  
+  document.querySelectorAll('.sb-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === 'reports');
+  });
+  
+  const submenu = document.getElementById('submenu-reports');
+  const chevron = document.querySelector('.submenu-chevron');
+  if (submenu) submenu.classList.add('open');
+  if (chevron) chevron.style.transform = 'rotate(-180deg)';
 }
 
 function showModal(html){
@@ -360,22 +434,20 @@ const PAGES={
 </div>`,
 
   tables:()=>`
-<div class="page-hdr">
-  <h2>Table Management</h2>
+<div class="page-hdr" style="justify-content:flex-end">
   <button class="btn btn-primary" onclick="openTableForm()"><i class="ti ti-plus" aria-hidden="true"></i> Add Table</button>
 </div>
 
 <div id="tables-view">
 <div class="tabs" id="table-tabs">
-  <div class="tab" onclick="switchTableView('map',this)">Live Map</div>
   <div class="tab active" onclick="switchTableView('list',this)">List View</div>
+  <div class="tab" onclick="switchTableView('map',this)">Live Map</div>
 </div>
 <div id="tables-inner"></div>
 </div>`,
 
   menu:()=>`
-<div class="page-hdr">
-  <h2>Menu Management</h2>
+<div class="page-hdr" style="justify-content:flex-end">
   <button class="btn btn-primary" onclick="openMenuForm()"><i class="ti ti-plus" aria-hidden="true"></i> Add Item</button>
 </div>
 <div class="filters">
@@ -402,8 +474,7 @@ const PAGES={
 </div>`,
 
   orders:()=>`
-<div class="page-hdr">
-  <h2>Order Management</h2>
+<div class="page-hdr" style="justify-content:flex-end">
   <div style="display:flex;gap:8px">
     <button class="btn btn-outline btn-sm"><i class="ti ti-download" aria-hidden="true"></i> Export</button>
   </div>
@@ -432,9 +503,6 @@ const PAGES={
 </div>`,
 
   billing:()=>`
-<div class="page-hdr">
-  <h2>Billing</h2>
-</div>
 <div class="alert alert-info"><i class="ti ti-info-circle" aria-hidden="true"></i> Select a table or order to generate a bill</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
   <div>
@@ -488,21 +556,8 @@ const PAGES={
 </div>`,
 
   reports:()=>`
-<div class="page-hdr">
-  <h2>Reports & Analytics</h2>
+<div class="page-hdr" style="justify-content:flex-end">
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-    <div class="report-dropdown-wrap">
-      <select id="report-selector" onchange="switchReportBySelect(this.value)">
-        <optgroup label="Sales">
-          <option value="sales">💰 Sales Report</option>
-          <option value="orders">📋 Order Report</option>
-        </optgroup>
-        <optgroup label="Menu">
-          <option value="items">🍽️ Item Analytics</option>
-        </optgroup>
-      </select>
-      <i class="ti ti-chevron-down"></i>
-    </div>
     <select style="width:auto;font-size:12px;padding:6px 10px">
       <option>Today</option><option>This Week</option><option selected>This Month</option><option>Custom Range</option>
     </select>
@@ -515,7 +570,7 @@ const PAGES={
 </div>`,
 
   staff:()=>`
-<div class="page-hdr"><h2>Staff Management</h2>
+<div class="page-hdr" style="justify-content:flex-end">
   <div style="display:flex;gap:8px">
     <button class="btn btn-outline" onclick="openStaffForm('kitchen')"><i class="ti ti-plus" aria-hidden="true"></i> Add Kitchen Staff</button>
     <button class="btn btn-primary" onclick="openStaffForm('waiter')"><i class="ti ti-plus" aria-hidden="true"></i> Add Waiter</button>
@@ -549,11 +604,15 @@ function switchTableView(view,el){
     </div>
     <div class="table-map-grid">
       ${TABLES_DATA.map(t=>`
-      <div class="table-cell ${t.status}" onclick="map Table(${t.id})">
+      <div class="table-cell ${t.status}" onclick="viewTable(${t.id})">
         <div class="t-num">${t.num}</div>
         <div class="t-info">${t.cap} seats · ${t.zone}</div>
         ${t.status==='occupied'?`<div class="t-info" style="color:var(--amber)">${t.order}</div>`:''}
         <div class="t-status">${statusBadge[t.status]||''}</div>
+        <div class="actions" style="margin-top:10px;justify-content:center;gap:6px">
+          <div class="icon-btn" onclick="event.stopPropagation();openTableForm(${t.id})" title="Edit"><i class="ti ti-edit" aria-label="Edit"></i></div>
+          <div class="icon-btn del" onclick="event.stopPropagation();confirmDelete('table',${t.id})" title="Delete"><i class="ti ti-trash" aria-label="Delete"></i></div>
+        </div>
       </div>`).join('')}
     </div>`;
   } else {
@@ -576,7 +635,7 @@ function switchTableView(view,el){
   }
 }
 
-function initTables(){switchTableView('map',document.querySelector('#table-tabs .tab'));}
+function initTables(){switchTableView('list',document.querySelector('#table-tabs .tab.active'));}
 
 function viewTable(id){
   const t=TABLES_DATA.find(x=>x.id===id);
@@ -608,12 +667,15 @@ function viewTable(id){
 
 function openTableForm(id){
   const t=id?TABLES_DATA.find(x=>x.id===id):null;
-  showModal(`<div class="modal">
-    <div class="modal-hdr"><h3>${t?'Edit':'Add'} Table</h3><button class="icon-btn" onclick="closeModal()"><i class="ti ti-x" aria-label="Close"></i></button></div>
-    <div class="modal-body">
+  document.getElementById('page-content').innerHTML = `
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:14px">
+        <h3 style="font-size:16px;font-weight:600;color:var(--accent)">${t?'Edit':'Add'} Table</h3>
+        <button class="btn btn-outline btn-sm" onclick="setPage('tables')"><i class="ti ti-arrow-left"></i> Back to Tables</button>
+      </div>
       <div class="form-grid">
-        <div><label>Table Number *</label><input placeholder="e.g. T-11" value="${t?t.num:''}"></div>
-        <div><label>Seating Capacity *</label><input type="number" min="1" max="20" placeholder="e.g. 4" value="${t?t.cap:''}"></div>
+        <div><label>Table Number <span style="color:var(--red)">*</span></label><input placeholder="e.g. T-11" value="${t?t.num:''}"></div>
+        <div><label>Seating Capacity <span style="color:var(--red)">*</span></label><input type="number" min="1" max="20" placeholder="e.g. 4" value="${t?t.cap:''}"></div>
         <div><label>Zone</label>
           <div class="select-wrap">
             <select><option value="">Select Zone</option><option${t&&t.zone==='Zone A'?' selected':''}>Zone A</option><option${t&&t.zone==='Zone B'?' selected':''}>Zone B</option><option${t&&t.zone==='Zone C'?' selected':''}>Zone C</option></select>
@@ -634,12 +696,12 @@ function openTableForm(id){
         </div>
       </div>
       <div class="tip" style="margin-top:10px"><i class="ti ti-info-circle" aria-hidden="true"></i> QR code will be auto-generated on save</div>
+      <div style="margin-top:24px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border);padding-top:16px">
+        <button class="btn btn-outline" onclick="setPage('tables')">Cancel</button>
+        <button class="btn btn-primary" onclick="setPage('tables');toast('Table ${t?'updated':'created'} successfully!')"><i class="ti ti-check" aria-hidden="true"></i> ${t?'Update':'Create'} Table</button>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="closeModal();toast('Table ${t?'updated':'created'} successfully!')"><i class="ti ti-check" aria-hidden="true"></i> ${t?'Update':'Create'} Table</button>
-    </div>
-  </div>`);
+  `;
 }
 
 function initMenu(){
@@ -677,25 +739,28 @@ function filterMenu(val){
 
 function openMenuForm(id){
   const m=id?MENU_DATA.find(x=>x.id===id):null;
-  showModal(`<div class="modal">
-    <div class="modal-hdr"><h3>${m?'Edit':'Add'} Menu Item</h3><button class="icon-btn" onclick="closeModal()"><i class="ti ti-x" aria-label="Close"></i></button></div>
-    <div class="modal-body">
+  document.getElementById('page-content').innerHTML = `
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:14px">
+        <h3 style="font-size:16px;font-weight:600;color:var(--accent)">${m?'Edit':'Add'} Menu Item</h3>
+        <button class="btn btn-outline btn-sm" onclick="setPage('menu')"><i class="ti ti-arrow-left"></i> Back to Menu</button>
+      </div>
       <div class="form-grid">
-        <div class="full"><label>Item Name *</label><input placeholder="e.g. Paneer Tikka" value="${m?m.name:''}"></div>
-        <div><label>Category *</label>
+        <div class="full"><label>Item Name <span style="color:var(--red)">*</span></label><input placeholder="e.g. Paneer Tikka" value="${m?m.name:''}"></div>
+        <div><label>Category <span style="color:var(--red)">*</span></label>
           <div class="select-wrap">
             <select><option>Starters</option><option>Mains</option><option>Desserts</option><option>Drinks</option></select>
             <i class="ti ti-chevron-down" aria-hidden="true"></i>
           </div>
         </div>
-        <div><label>Price (₹) *</label><input type="number" placeholder="e.g. 140" value="${m?m.price:''}"></div>
-        <div><label>Type *</label>
+        <div><label>Price (₹) <span style="color:var(--red)">*</span></label><input type="number" placeholder="e.g. 140" value="${m?m.price:''}"></div>
+        <div><label>Type <span style="color:var(--red)">*</span></label>
           <div class="select-wrap">
             <select><option value="veg">Vegetarian</option><option value="non-veg">Non-Vegetarian</option></select>
             <i class="ti ti-chevron-down" aria-hidden="true"></i>
           </div>
         </div>
-        <div><label>Preparation Time (min) *</label><input type="number" placeholder="e.g. 15" value="${m?m.prep:''}"></div>
+        <div><label>Preparation Time (min) <span style="color:var(--red)">*</span></label><input type="number" placeholder="e.g. 15" value="${m?m.prep:''}"></div>
         <div><label>Kitchen Station</label>
           <div class="select-wrap">
             <select><option>Grill</option><option>Fry</option><option>Salad</option><option>Beverage</option></select>
@@ -716,12 +781,12 @@ function openMenuForm(id){
           <span style="font-size:13px">Mark as Available</span>
         </div>
       </div>
+      <div style="margin-top:24px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border);padding-top:16px">
+        <button class="btn btn-outline" onclick="setPage('menu')">Cancel</button>
+        <button class="btn btn-primary" onclick="setPage('menu');toast('Menu item ${m?'updated':'added'} successfully!')"><i class="ti ti-check" aria-hidden="true"></i> ${m?'Update':'Add'} Item</button>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="closeModal();toast('Menu item ${m?'updated':'added'} successfully!')"><i class="ti ti-check" aria-hidden="true"></i> ${m?'Update':'Add'} Item</button>
-    </div>
-  </div>`);
+  `;
 }
 
 function initOrders(){renderOrders(ORDERS_DATA);}
@@ -1020,9 +1085,24 @@ function filterItemsTable(){
   }));
 }
 
-function initReports(){switchReportById('sales');}
+function initReports(){switchReportById(activeReport);}
 function switchReportBySelect(id){switchReportById(id);}
 function switchReportById(id){
+  const titles = {
+    sales: 'Sales Report',
+    orders: 'Order Report',
+    items: 'Item Analytics'
+  };
+  const titleEl = document.getElementById('page-title');
+  if (titleEl) {
+    titleEl.textContent = 'Reports - ' + (titles[id] || 'Analytics');
+  }
+
+  // Highlight the active sub-item in sidebar
+  document.querySelectorAll('.sb-subitem').forEach(el => {
+    el.classList.toggle('active', el.dataset.report === id);
+  });
+
   const sel=document.getElementById('report-selector');
   if(sel)sel.value=id;
   document.getElementById('report-content').innerHTML=REPORT_CONTENT[id]||'<div class="empty-state"><i class="ti ti-chart-bar" aria-hidden="true"></i>No data</div>';
@@ -1061,12 +1141,15 @@ function switchStaff(type,el){
 function openStaffForm(role,id){
   const s=id?STAFF_DATA.find(x=>x.id===id):null;
   const isWaiter=role==='waiter';
-  showModal(`<div class="modal">
-    <div class="modal-hdr"><h3>${s?'Edit':'Add'} ${isWaiter?'Waiter':'Kitchen Staff'}</h3><button class="icon-btn" onclick="closeModal()"><i class="ti ti-x" aria-label="Close"></i></button></div>
-    <div class="modal-body">
+  document.getElementById('page-content').innerHTML = `
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:14px">
+        <h3 style="font-size:16px;font-weight:600;color:var(--accent)">${s?'Edit':'Add'} ${isWaiter?'Waiter':'Kitchen Staff'}</h3>
+        <button class="btn btn-outline btn-sm" onclick="setPage('staff')"><i class="ti ti-arrow-left"></i> Back to Staff</button>
+      </div>
       <div class="form-grid">
-        <div class="full"><label>Full Name *</label><input placeholder="e.g. Ravi Mahesh" value="${s?s.name:''}"></div>
-        <div><label>Phone Number *</label><input type="tel" placeholder="10-digit number" value="${s?s.phone:''}" maxlength="10"></div>
+        <div class="full"><label>Full Name <span style="color:var(--red)">*</span></label><input placeholder="e.g. Ravi Mahesh" value="${s?s.name:''}"></div>
+        <div><label>Phone Number <span style="color:var(--red)">*</span></label><input type="tel" placeholder="10-digit number" value="${s?s.phone:''}" maxlength="10"></div>
         <div><label>Email</label><input type="email" placeholder="Optional" value="${s?s.email:''}"></div>
         ${isWaiter?`
         <div class="full"><label>Assign Tables</label>
@@ -1074,7 +1157,7 @@ function openStaffForm(role,id){
             ${TABLES_DATA.map(t=>`<label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer"><input type="checkbox" ${s&&s.tables.includes(t.num)?'checked':''}> ${t.num}</label>`).join('')}
           </div>
         </div>`:
-        `<div><label>Role *</label>
+        `<div><label>Role <span style="color:var(--red)">*</span></label>
           <div class="select-wrap">
             <select><option value="head-chef">Head Chef</option><option value="kitchen-staff"${s&&s.role==='kitchen-staff'?' selected':''}>Kitchen Staff</option><option value="compiler">Compiler</option></select>
             <i class="ti ti-chevron-down" aria-hidden="true"></i>
@@ -1088,13 +1171,13 @@ function openStaffForm(role,id){
         </div>
       </div>
       <div class="tip" style="margin-top:10px"><i class="ti ti-info-circle" aria-hidden="true"></i> OTP login will be sent to the provided phone number</div>
+      <div style="margin-top:24px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border);padding-top:16px">
+        ${s?`<button class="btn btn-danger btn-sm" onclick="setPage('staff');toast('Staff removed','warn')"><i class="ti ti-trash" aria-hidden="true"></i> Remove</button>`:''}
+        <button class="btn btn-outline" onclick="setPage('staff')">Cancel</button>
+        <button class="btn btn-primary" onclick="setPage('staff');toast('Staff ${s?'updated':'added'} successfully!')"><i class="ti ti-check" aria-hidden="true"></i> ${s?'Update':'Add'} Staff</button>
+      </div>
     </div>
-    <div class="modal-footer">
-      ${s?`<button class="btn btn-danger btn-sm" onclick="closeModal();toast('Staff removed','warn')"><i class="ti ti-trash" aria-hidden="true"></i> Remove</button>`:''}
-      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="closeModal();toast('Staff ${s?'updated':'added'} successfully!')"><i class="ti ti-check" aria-hidden="true"></i> ${s?'Update':'Add'} Staff</button>
-    </div>
-  </div>`);
+  `;
 }
 
 function confirmDelete(type,id){
